@@ -1,5 +1,5 @@
 input[type="text"] {
-    position: absolute;
+    /* position: absolute; */
     width: 200px;  /* Asegúrate de que tenga un tamaño visible */
     height: 30px;  /* Asegúrate de que tenga un tamaño visible */
     opacity: 1;    /* Visible */

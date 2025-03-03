@@ -7,18 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // 💾 Abrir o crear la base de datos
     const request = indexedDB.open(dbName, dbVersion);
 
-    function playBeep() {
-        const context = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = context.createOscillator();
-        oscillator.type = "sine"; // Tipo de onda (senoidal para un "bip" limpio)
-        oscillator.frequency.setValueAtTime(500, context.currentTime); // Frecuencia en Hz (1000 es un buen "bip")
-        oscillator.connect(context.destination);
-        oscillator.start();
-        setTimeout(() => {
-            oscillator.stop();
-        }, 500); // Duración del sonido en milisegundos
-    }
-
     request.onupgradeneeded = function (event) {
         db = event.target.result;
         if (!db.objectStoreNames.contains("Registros")) {
@@ -39,37 +27,30 @@ document.addEventListener("DOMContentLoaded", function () {
     request.onerror = function (event) {
         console.error("Error al abrir la base de datos", event.target.error);
     };
+    
 
-    // 📷 Configurar lector QR
-    function onScanSuccess(decodedText) {
-        console.log(`Código QR detectado: ${decodedText}`);
-        document.getElementById("qr-result").innerText = mensajeUsuario;
-
-        procesarQR(decodedText); // Procesar los datos escaneados
+  
+    document.getElementById("reader").addEventListener("keypress", function (event) {
+        if (event.key === "Enter") { // La mayoría de los lectores envían un "Enter" al final
+          console.log("Código escaneado:", event.target.value);
+          let readedData = event.target.value;
+          readedData = readedData.replace('!', '');
+          procesarQR(readedData);
+          event.target.value = ""; // Limpiar el campo después de leer
+          document.getElementById("qr-result").innerText = mensajeUsuario;  
 
         let messageDiv = document.getElementById("message");
             
-        // Mostrar el mensaje con el check
-        messageDiv.classList.add("visible");
-        playBeep();
-        // Ocultar el mensaje después de 3 segundos
-        setTimeout(() => {
-            messageDiv.classList.remove("visible");
-        }, 3000);
+            // Mostrar el mensaje con el check
+            messageDiv.classList.add("visible");
+            // Ocultar el mensaje después de 3 segundos
+            setTimeout(() => {
+                messageDiv.classList.remove("visible");
+            }, 3000);
     
-    }
-
-    function onScanError(errorMessage) {
-        console.warn(`Error al leer QR: ${errorMessage}`);
-    }
-
-    let qrScanner = new Html5Qrcode("qr-reader");
-    qrScanner.start(
-        { facingMode: "user" }, // Usa cámara trasera
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        onScanSuccess,
-        onScanError
-    );
+        }
+      });
+ 
 
     // 📝 Procesar datos y guardarlos en IndexedDB
     let processingQR = false; // Bandera para evitar múltiples inserciones
@@ -212,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 link.setAttribute("href", encodeURI(csvContent));
                 let currentTime = Date.now();
                 let readableDate = new Date(currentTime);
-                let nombre_archivo = "Registro_entrada_" + readableDate.toISOString().split('T')[0]; + ".csv"
+                let nombre_archivo = "Registros_" + readableDate.toISOString().split('T')[0]; + ".csv"
                 link.setAttribute("download", nombre_archivo);
                 document.body.appendChild(link);
                 link.click();
