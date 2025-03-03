@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 link.setAttribute("href", encodeURI(csvContent));
                 let currentTime = Date.now();
                 let readableDate = new Date(currentTime);
-                let nombre_archivo = "Registro_entrada_" + readableDate.toISOString().split('T')[0]; + ".csv"
+                let nombre_archivo = "Registros_" + readableDate.toISOString().split('T')[0]; + ".csv"
                 link.setAttribute("download", nombre_archivo);
                 document.body.appendChild(link);
                 link.click();
