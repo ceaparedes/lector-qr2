@@ -260,16 +260,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // 📤 Exportar datos a Excel (entrada)
-    document.getElementById("exportarExcelEntrada").addEventListener("click", function () {
+
+    document.getElementById("exportarExcel").addEventListener("click", function () {
         let transaction = db.transaction(["Registros"], "readonly");
         let objectStore = transaction.objectStore("Registros");
-        let registros = [["Operadora","Movimiento", "Fecha y hora"]];
+        let registros = [["Operadora", "Clon", "Invernadero", "Canaleton","Movimiento", "Fecha y hora"]];
 
         objectStore.openCursor().onsuccess = function (event) {
             let cursor = event.target.result;
             if (cursor) {
-                registros.push([cursor.value.rut, cursor.value.movimiento, cursor.value.timestamp]);
+                registros.push([cursor.value.rut, cursor.value.clon, cursor.value.invernadero,
+                    cursor.value.canaleton,cursor.value.movimiento, cursor.value.timestamp]);
                 cursor.continue();
             } else {
                 let csvContent = "data:text/csv;charset=utf-8," + registros.map(e => e.join(",")).join("\n");
@@ -284,32 +285,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
     });
-
-
-    // document.getElementById("exportarExcel").addEventListener("click", function () {
-    //     let transaction = db.transaction(["Registros"], "readonly");
-    //     let objectStore = transaction.objectStore("Registros");
-    //     let registros = [["Operadora", "Clon", "Invernadero", "Canaleton","Movimiento", "Fecha y hora"]];
-
-    //     objectStore.openCursor().onsuccess = function (event) {
-    //         let cursor = event.target.result;
-    //         if (cursor) {
-    //             registros.push([cursor.value.rut, cursor.value.clon, cursor.value.invernadero,
-    //                 cursor.value.canaleton,cursor.value.movimiento, cursor.value.timestamp]);
-    //             cursor.continue();
-    //         } else {
-    //             let csvContent = "data:text/csv;charset=utf-8," + registros.map(e => e.join(",")).join("\n");
-    //             let link = document.createElement("a");
-    //             link.setAttribute("href", encodeURI(csvContent));
-    //             let currentTime = Date.now();
-    //             let readableDate = new Date(currentTime);
-    //             let nombre_archivo = "Registro_entrada_" + readableDate.toISOString().split('T')[0]; + ".csv"
-    //             link.setAttribute("download", nombre_archivo);
-    //             document.body.appendChild(link);
-    //             link.click();
-    //         }
-    //     };
-    // });
 
 
 });
