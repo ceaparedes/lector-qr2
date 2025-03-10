@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Registro entradas QR</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        // Obtener el valor del parámetro "rut"
+        const rut = params.get("rut");
+
+        console.log("RUT:", rut);
+    </script>
+</head>
+<body>
+    <h1>Registro QR - Bandejas de {persona}</h1>
+
+    <div class="container">
+        <!-- Contenedor para el lector de QR -->
+        <div id="opticon-container">
+           <input type="text" id="reader" name="reader" >
+        </div>
+        
+        <!-- Mensaje de confirmación -->
+        <div id="message" class="message">
+            <span id="qr-result"></span>
+            <img class="check-icon" src="https://cdn-icons-png.flaticon.com/512/845/845646.png" alt="Check">
+        </div>
+    </div>
+    
+    
+    <a class="custom-button" href="salida.html">Finalizar</a>
+    <div class="table-container">
+        <table>
+            <thead>
+                <th>Rut</th>
+                <th>Clon</th>
+                <th>canaleton</th>
+                <th>Invernadero</th>
+                <th>Hora de Registro</th>
+            </thead>
+            <tbody id="nuevos-registros">
+                <tr>
+                    <td>12345678-5</td>
+                    <td>C-20</td>
+                    <td>PM-02</td>
+                    <td>C-690</td>
+                    <td>09-03-2025 12:23:34</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        setInterval(() => {
+        document.getElementById("reader").focus();
+    }, 500);
+    </script>
+    <script src="lector_bandeja.js"></script>
+</body>
+</html>
