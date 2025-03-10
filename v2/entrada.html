@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Registro entradas QR</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Registro QR</h1>
+
+    <div class="container">
+        <!-- Contenedor para el lector de QR -->
+        <div id="qr-reader"></div>
+
+        <!-- Mensaje de confirmación -->
+        <div id="message" class="message">
+            <span id="qr-result"></span>
+            <img class="check-icon" src="https://cdn-icons-png.flaticon.com/512/845/845646.png" alt="Check">
+        </div>
+    </div>
+    
+    <button class="custom-button" id="exportarExcelEntrada">Exportar</button>
+    <div class="table-container">
+        <table>
+            <thead>
+                <th>Rut</th>
+                <th>Nombre</th>
+                <th>Hora de Entrada</th>
+            </thead>
+            <tbody id="nuevos-registros">
+                <tr>
+                    <td>12345678-5</td>
+                    <td>Juana Perez</td>
+                    <td>09-03-2025 12:23:34</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        import Swal from 'sweetalert2'
+
+        // or via CommonJS
+        const Swal = require('sweetalert2');
+    </script>
+    <script src="lector_entrada.js"></script>
+</body>
+</html>
