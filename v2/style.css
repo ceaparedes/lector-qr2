@@ -82,3 +82,21 @@ h1 {
 .custom-button:hover {
     background-color: #9F9A00; /* Color más oscuro al pasar el mouse */
 }
+
+.table-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+  }
+
+  table {
+    margin: auto;
+    border-collapse: collapse;
+    border: 2px solid black;
+  }
+
+  th, td {
+    padding: 10px;
+    border: 1px solid black;
+  }
