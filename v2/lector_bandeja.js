@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const dbVersion = 1;
     const mensajeUsuario = 'Registro correcto'
     let db;
+    let contador_bandejas = 0;
+    const timeOut = 2;
 
     const params = new URLSearchParams(window.location.search);
     // Obtener el valor del parámetro "rut"
@@ -50,7 +52,9 @@ document.addEventListener("DOMContentLoaded", function () {
           console.log("Código escaneado:", event.target.value);
           let readedData = event.target.value;
           readedData = readedData.replace('!', '');
+          console.log("readedData:",readedData);
           readedData = rut+','+readedData;
+          
           procesarQR(readedData);
           event.target.value = ""; // Limpiar el campo después de leer
           document.getElementById("qr-result").innerText = mensajeUsuario;  
@@ -85,8 +89,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (processingQR) return; // Si ya se está procesando, no hacer nada
         processingQR = true; // Bloquear nuevas inserciones
-        const [rut, clon, invernadero,canaleton] = datosQR.split(",");
-        if (!rut || !clon || !invernadero || !canaleton) {
+        const [rut, clon, invernadero,canaleton, correlativo] = datosQR.split(",");
+        if (!rut || !clon || !invernadero || !canaleton || !correlativo) {
             console.error("QR inválido");
             processingQR = false;
             return;
@@ -110,14 +114,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log('hora registro:',horaRegistro);
                 console.log('Hora registro nuevo:', horaRegistroActual);
                 if (registro.rut === rut && registro.clon === clon && 
-                    (horaRegistro == horaRegistroActual || horaRegistro + 5 >= horaRegistroActual ) ) {
-                    console.log(horaRegistro + 5 , horaRegistroActual);
+                    (horaRegistro == horaRegistroActual || horaRegistro + timeOut >= horaRegistroActual ) ) {
+                    console.log(horaRegistro + timeOut , horaRegistroActual);
                     console.log("Registro duplicado encontrado, no se insertará.");
                     processingQR = false;
                 }
                 else {
                     console.log('ingrese al primer else');
-                    insertarRegistro(rut, clon, invernadero, canaleton,movimiento, timestamp);
+                    insertarRegistro(rut, clon, invernadero, canaleton, correlativo,movimiento, timestamp);
                     
                 }
                 //cursor.continue();  // Continuar buscando más registros
@@ -125,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
                 console.log('ingrese al segundo else');
                 // Si no hay registros, insertar el nuevo registro
-                insertarRegistro(rut, clon, invernadero, canaleton,movimiento, timestamp);
+                insertarRegistro(rut, clon, invernadero, canaleton, correlativo,movimiento, timestamp);
             }
         };
     
@@ -136,16 +140,17 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 💾 Guardar registro en la BD
-    function insertarRegistro(rut, clon, invernadero, canaleton,movimiento, timestamp) {
+    function insertarRegistro(rut, clon, invernadero, canaleton, correlativo,movimiento, timestamp) {
         const transaction = db.transaction("Registros", "readwrite");
         const objectStore = transaction.objectStore("Registros");
-    
+        console.log(rut, clon, invernadero, canaleton, correlativo,movimiento, timestamp);
         const nuevoRegistro = {
             rut: rut,
             clon: clon,
             invernadero : invernadero,
             canaleton : canaleton,
             movimiento: movimiento,
+            correlativo:correlativo,
             timestamp: timestamp
         };
     
@@ -161,12 +166,15 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         
         let tbody = document.getElementById("nuevos-registros");
+        contador_bandejas ++;
         let nuevoRegistroTable = `
                 <tr>
+                    <td>${contador_bandejas}</td>
                     <td>${rut}</td>
                     <td>${clon}</td>
                     <td>${canaleton}</td>
                     <td>${invernadero}</td>
+                    <td>${correlativo}</td>
                     <td>${timestamp}</td>
                 </tr>
         `;
@@ -174,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         processingQR = false;
-        //cargarRegistrosEnTabla();
+        
     }
 
     // 📅 Formatear fecha a dd/mm/yyyy hh:mm
